@@ -22,9 +22,9 @@ while true; do
 
 		2)
 			echo -e "\nУстанавливаю Porainer.."
-			docker volume create portainer_date
+			docker volume create portainer_data
 			echo "Запускаю Portainer.."
-			docker run -d -p 8000:8000 -p 9443:9443 --name portainer --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_date:/data portainer/portainer:latest
+			docker run -d -p 8000:8000 -p 9443:9443 --name portainer --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer-ce:latest
 			echo "Настройка прав для Docker-сокета..."
 			chmod 666 /var/run/docker.sock
 			echo "Portainer доступен на порту 9443(https)"

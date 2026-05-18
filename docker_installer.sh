@@ -38,23 +38,23 @@ while true; do
 			while true; do
 				echo -e "\n--- [Проверерка компонентов] ---"
 				if command -v docker &> /dev/null; then
-					echo "Docker: [ Установлен ]"
+					echo -e "Docker: [ \e[32mУстановлен\e[0m ]"
 					D_STATUS="ok"
 				else
-					echo "Docker: [ Не установлен ]"
+					echo -e "Docker: [ \e[m31Не установлен\e[0m ]"
 					D_STATUS="miss"
 				fi
 
 				if docker ps -a --format '{{.Names}}' | grep -q "portainer"; then
-					echo "Portainer: [ Запущен ]"
+					echo -e "Portainer: [ \e[32mЗапущен\e[0m ]"
 				else
-					echo "Portainer: [ Отсутвует ]"
+					echo -e "Portainer: [ \e[31mОтсутвует\e[0m ]"
 				fi
 
 				if command -v git &> /dev/null; then
-					echo "Git: [ Установлен ]"
+					echo -e "Git: [ \e[32mУстановлен\e[0m ]"
 				else
-					echo "Git: [ Не установлен ]"
+					echo -e "Git: [ \e[31mНе установлен\e[0m ]"
 				fi
 
 				echo -e "\n--- [ Меню установки проекта ] ---"
@@ -159,7 +159,7 @@ EOF
 
 		
 		5)
-			echo -e "\nВыхожу с скрипта"
+			echo -e "\nВыход с скрипта..."
 			break
 			;;
 

@@ -39,7 +39,7 @@ while true; do
 			echo -e "\nЗапускаю ping 8.8.8.8 "
 			ping 8.8.8.8 -c 100 > ping.txt
 			echo "Запускаю mtr google.com"
-			if ! command -v mtr &> dev/null; then apt insrall mtr -y -qq &> /dev/null; fi
+			if ! command -v mtr &> /dev/null; then apt insrall mtr -y -qq &> /dev/null; fi
 			mtr -n --report --report-cycles 200 google.com > mtr_google.txt
 			;;
 

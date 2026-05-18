@@ -25,11 +25,13 @@ while true; do
 			echo -e "\nУстанавливаю Portainer..."
 			docker volume create portainer_data
 			
-			echo -e "\Запускаю Portainer..."
+			echo -e "\nЗапускаю Portainer..."
 			docker run -d -p 8000:8000 -p 9443:9443 --name portainer --restart always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer-ce:latest
 
 			echo -e "\nНастраиваю права для Docker-сокета..."
 			chmod 666 /var/run/docker.sock
+
+			echo -e "\e[1;32 Готово! Софт установлен! \e[0m"
 			;;
 
 		2)
@@ -65,7 +67,7 @@ while true; do
 						if [[ "$D_STATUS" == "ok" ]]; then
 							echo "Запускаю установку проекта.."
 
-							read -p "Введите ссылку на репазиторий Github: " GIT_LINK
+							read -p "Введите ссылку на репазиторий Github(БЕЗ .git): " GIT_LINK
 							git clone $GIT_LINK.git
 
 							read -p "Введите папку проекта: " PROJECT_NAME
@@ -83,8 +85,10 @@ EOF
 							echo "Запускаю контейнер..."
 							docker run -d --name $CONTAINER_NAME --env-file .env $CONTAINER_NAME
 
+							echo -e "\e[1;32m Проект $CONTAINER_NAME запущен!\e[0m"
+
 						else
-							echo "Docker не установлен! Установите в главном меню пункт 1."
+							echo -e "\e[1;31m Docker не установлен! Установите в главном меню пункт 1.\e[0m"
 						fi
 						;;
 					
@@ -117,7 +121,7 @@ EOF
 						echo "Удаляю папку проекта..."
 						rm -rf $PROJECT_NAME
 
-						echo -e "\nГотово! Контейнеры и папка проекта удалена!"
+						echo -e "\e[1;32m Готово! Контейнеры и папка проекта удалена!\e[0m"
 						;;
 
 					2)
@@ -125,7 +129,7 @@ EOF
 						apt purge docker.io git -y &> /dev/null
 						apt autoremove -y &> /dev/null
 
-						echo -e "\nГотово! Софт удалён!"
+						echo -e "\e[1;32 Готово! Софт удалён!\e[0m"
 						;;
 					
 					3)

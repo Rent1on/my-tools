@@ -10,7 +10,7 @@ while true; do
 	echo "4. - Диагностика сервера"
 	echo "5. - Установить собвственный проект"
 	echo "6. - Выход"
-	read -p "(1-6)Выбирите операцию: " choise
+	read -p "(1-6)Выберите операцию: " choise
 
 	case "$choise" in
 		1)
@@ -39,7 +39,7 @@ while true; do
 			echo -e "\nЗапускаю ping 8.8.8.8 "
 			ping 8.8.8.8 -c 100 > ping.txt
 			echo "Запускаю mtr google.com"
-			if ! command -v mtr &> /dev/null; then apt insrall mtr -y -qq &> /dev/null; fi
+			if ! command -v mtr &> /dev/null; then apt install mtr -y -qq &> /dev/null; fi
 			mtr -n --report --report-cycles 200 google.com > mtr_google.txt
 			;;
 
@@ -69,11 +69,11 @@ while true; do
 				echo -e "\n--- [ Меню установки проекта ] ---"
 				echo "1. - Установить проект (требует Git, Docker)"
 				echo "2. - Назад в главное меню"
-				read -p "Выбирите действие: " sub_choice
+				read -p "Выберите действие: " sub_choice
 
 				case "$sub_choice" in
 					1)	
-						if [[ "$D_STASTUS" == "ok" ]]; then
+						if [[ "$D_STATUS" == "ok" ]]; then
 							echo "Запускаю установку проекта.."
 
 							read -p "Введите ссылку на репазиторий Github: " GIT_LINK
@@ -87,16 +87,15 @@ while true; do
 							cat <<EOF > ".env"
 BOT_TOKEN=$BOT_TOKEN
 EOF
-							read -p "Введите имя контейнера: " CONTAINER_NAME
+							read -p "Введите имя контейнера и проекта: " CONTAINER_NAME
 							echo "Начинаю сборку контейнера..."
-							docker buil -t $CONTAINER_NAME .
+							docker build -t $CONTAINER_NAME .
 							
-							read -p "Введите имя проекта для Portainer: " NAME_PROJECT
 							echo "Запускаю контейнер..."
-							docker run -d --name $CONTAINER_NAME --env-file .env $NAME_PROJECT
+							docker run -d --name $CONTAINER_NAME --env-file .env $CONTAINER_NAME
 
 						else
-							echo "Докер не установлен! Установите в главном меню пункт 1."
+							echo "Docker не установлен! Установите в главном меню пункт 1."
 						fi
 						;;
 					

@@ -38,21 +38,18 @@ while true; do
 			while true; do
 				echo -e "\n--- [Проверерка компонентов] ---"
 				if command -v docker &> /dev/null; then
-					if docker --version &> /dev/null; then
-						echo -e "Docker: [ \e[32mУстановлен\e[0m ]"
-						D_STATUS="ok"
+					echo -e "Docker: [ \e[32mУстановлен\e[0m ]"
+					D_STATUS="ok"
+					
+					if docker ps -a --format '{{.Names}}' | grep -q "portainer"; then
+						echo -e "Portainer: [ \e[32mЗапущен\e[0m ]"
 					else
-						echo -e "Docker: [ \e[31mСЛОМАН (бинарник не найден)\e[0m ]"
-						D_STATUS="miss"
+						echo -e "Portainer: [ \e[31mОтсутвует\e[0m ]"	
 					fi
 				else
 					echo -e "Docker: [ \e[31mНе установлен\e[0m ]"
 					D_STATUS="miss"
-				fi
 
-				if docker ps -a --format '{{.Names}}' | grep -q "portainer"; then
-					echo -e "Portainer: [ \e[32mЗапущен\e[0m ]"
-				else
 					echo -e "Portainer: [ \e[31mОтсутвует\e[0m ]"
 				fi
 

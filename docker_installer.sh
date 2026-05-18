@@ -4,46 +4,35 @@ chmod +x "$0" &> /dev/null
 
 while true; do
 	echo -e "\n=-- Меню исталятора Docker --="
-	echo "1. - Установить Docker"
-	echo "2. - Установить Portainer"
-	echo "3. - Установить Git"
+	echo "1. - Установить софт (Docker, Portainer, Git)"
+	echo "2. - Установка и контейнеризация проекта"
+	echo "3. - Удаления(Проект, софт)"
 	echo "4. - Диагностика сервера"
-	echo "5. - Установить собвственный проект"
-	echo "6. - Выход"
-	read -p "(1-6)Выберите операцию: " choise
+	echo "5. - Выход"
+	read -p "Выберите операцию: " choise
 
 	case "$choise" in
 		1)
 			echo -e "\nУстанавливаю Docker..."
 			apt update && apt install docker.io -y
-			echo "Запускаю службы Docker..."
+
+			echo -e "\nЗапускаю службы Docker..."
 			systemctl enable --now docker
+
+			echo -e "\nУстанавливаю Git..."
+			apt update && apt install git -y
+
+			echo -e "\nУстанавливаю Portainer..."
+			docker volume create portainer_data
+			
+			echo -e "\Запускаю Portainer..."
+			docker run -d -p 8000:8000 -p 9443:9443 --name portainer --restart always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer-ce:latest
+
+			echo -e "\nНастраиваю права для Docker-сокета..."
+			chmod 666 /var/run/docker.sock
 			;;
 
 		2)
-			echo -e "\nУстанавливаю Porainer.."
-			docker volume create portainer_data
-			echo "Запускаю Portainer.."
-			docker run -d -p 8000:8000 -p 9443:9443 --name portainer --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer-ce:latest
-			echo "Настройка прав для Docker-сокета..."
-			chmod 666 /var/run/docker.sock
-			echo "Portainer доступен на порту 9443(https)"
-			;;
-
-		3)
-			echo -e "\nУстанавливаю Git"
-			apt update && apt install git -y
-			;;
-
-		4)
-			echo -e "\nЗапускаю ping 8.8.8.8 "
-			ping 8.8.8.8 -c 100 > ping.txt
-			echo "Запускаю mtr google.com"
-			if ! command -v mtr &> /dev/null; then apt install mtr -y -qq &> /dev/null; fi
-			mtr -n --report --report-cycles 200 google.com > mtr_google.txt
-			;;
-
-		5)
 			while true; do
 				echo -e "\n--- [Проверерка компонентов] ---"
 				if command -v docker &> /dev/null; then
@@ -104,22 +93,69 @@ EOF
 						;;
 
 					*)
-						echo "Не верный выбор действия!"
+						echo "Не верный выбор действия! Выбирите 1-2!"
 						;;
 				esac
 			done
 			;;
 
+		3)
+			while true; do
+				echo -e "\n--- [ Меню удаления ] ---"
+				echo "1. - Удалить проект и контейнеры"
+				echo "2. - Удалить софт"
+				echo "3. - Выход"
+				read -p "Выберите операцию: " del_choise
+				case "$del_choise" in
+					1)
+						read -p "Введите имя вашего контейнера: " CONTAINER_NAME
+						echo "Останавливаю и удаляю контейнеры..."
+						docker stop portainer $CONTAINER_NAME &> /dev/null
+						docker rm portainer $CONTAINER_NAME &> /dev/null
+
+						read -p "Введите названия папки проекта: " PROJECT_NAME
+						echo "Удаляю папку проекта..."
+						rm -rf $PROJECT_NAME
+
+						echo -e "\nГотово! Контейнеры и папка проекта удалена!"
+						;;
+
+					2)
+						echo -e "\nУдаляю софт..."
+						apt purge docker.io git -y &> /dev/null
+						apt autoremove -y &> /dev/null
+
+						echo -e "\nГотово! Софт удалён!"
+						;;
+					
+					3)
+						break
+						;;
+					
+					*)
+						echo -e "\nНе верный выбор действия! Выбирите 1-2!"
+						;;
+				esac
+			done
+			;;
 		
-		6)
-			echo " "
-			echo "Выхожу с скрипта"
+		4)
+			echo -e "\nЗапускаю ping 8.8.8.8 "
+			ping 8.8.8.8 -c 100 > diagnostic.txt
+			echo "Запускаю mtr google.com"
+			if ! command -v mtr &> /dev/null; then apt install mtr -y -qq &> /dev/null; fi
+			echo " " >> diagnostic.txt
+			mtr -n --report --report-cycles 200 google.com >> diagnostic.txt
+			;;
+
+		
+		5)
+			echo -e "\nВыхожу с скрипта"
 			break
 			;;
 
 		*)
-			echo " "
-			echo "Данной операции нет, выбирите от 1 до 6!"
+			echo -e "\nДанной операции нет, выбирите от 1 до 5!"
 			;;
 
 	esac

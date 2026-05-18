@@ -44,8 +44,73 @@ while true; do
 			;;
 
 		5)
-			echo -e "\nВ разработке..."
+			while true; do
+				echo -e "\n--- [Проверерка компонентов] ---"
+				if command -v docker &> /dev/null; then
+					echo "Docker: [ Установлен ]"
+					D_STATUS="ok"
+				else
+					echo "Docker: [ Не установлен ]"
+					D_STATUS="miss"
+				fi
+
+				if docker ps -a --format '{{.Names}}' | grep -q "portainer"; then
+					echo "Portainer: [ Запущен ]"
+				else
+					echo "Portainer: [ Отсутвует ]"
+				fi
+
+				if command -v git &> /dev/null; then
+					echo "Git: [ Установлен ]"
+				else
+					echo "Git: [ Не установлен ]"
+				fi
+
+				echo -e "\n--- [ Меню установки проекта ] ---"
+				echo "1. - Установить проект (требует Git, Docker)"
+				echo "2. - Назад в главное меню"
+				read -p "Выбирите действие: " sub_choice
+
+				case "$sub_choice" in
+					1)	
+						if [[ "$D_STASTUS" == "ok" ]]; then
+							echo "Запускаю установку проекта.."
+
+							read -p "Введите ссылку на репазиторий Github: " GIT_LINK
+							git clone $GIT_LINK.git
+
+							read -p "Введите папку проекта: " PROJECT_NAME
+							cd $PROJECT_NAME
+
+							echo "Создаю .env файл..."
+							read -p "Введите токен бота: " BOT_TOKEN
+							cat <<EOF > ".env"
+BOT_TOKEN=$BOT_TOKEN
+EOF
+							read -p "Введите имя контейнера: " CONTAINER_NAME
+							echo "Начинаю сборку контейнера..."
+							docker buil -t $CONTAINER_NAME .
+							
+							read -p "Введите имя проекта для Portainer: " NAME_PROJECT
+							echo "Запускаю контейнер..."
+							docker run -d --name $CONTAINER_NAME --env-file .env $NAME_PROJECT
+
+						else
+							echo "Докер не установлен! Установите в главном меню пункт 1."
+						fi
+						;;
+					
+					2)
+						break
+						;;
+
+					*)
+						echo "Не верный выбор действия!"
+						;;
+				esac
+			done
 			;;
+
 		
 		6)
 			echo " "

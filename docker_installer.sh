@@ -37,11 +37,16 @@ while true; do
 		2)
 			while true; do
 				echo -e "\n--- [Проверерка компонентов] ---"
-				if docker --version &> /dev/null; then
-					echo -e "Docker: [ \e[32mУстановлен\e[0m ]"
-					D_STATUS="ok"
+				if command -v docker &> /dev/null; then
+					if docker --version &> /dev/null; then
+						echo -e "Docker: [ \e[32mУстановлен\e[0m ]"
+						D_STATUS="ok"
+					else
+						echo -e "Docker: [ \e[31mСЛОМАН (бинарник не найден)\e[0m ]"
+						D_STATUS="miss"
+					fi
 				else
-					echo -e "Docker: [ \e[m31Не установлен\e[0m ]"
+					echo -e "Docker: [ \e[31mНе установлен\e[0m ]"
 					D_STATUS="miss"
 				fi
 

@@ -37,7 +37,7 @@ while true; do
 		2)
 			while true; do
 				echo -e "\n--- [Проверерка компонентов] ---"
-				if command -v docker &> /dev/null; then
+				if docker --version &> /dev/null; then
 					echo -e "Docker: [ \e[32mУстановлен\e[0m ]"
 					D_STATUS="ok"
 				else
@@ -133,6 +133,7 @@ EOF
 						rm -rf /var/lib/docker
 						rm -rf /var/run/docker.sock
 						apt autoremove -y &> /dev/null
+						hash -r
 
 						echo -e "\e[32mГотово! Софт удалён!\e[0m"
 						;;

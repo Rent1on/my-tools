@@ -3,6 +3,7 @@
 chmod +x "$0" &> /dev/null
 
 while true; do
+	clear
 	echo -e "\n=-- Меню исталятора Docker --="
 	echo "1. - Установить софт (Docker, Portainer, Git)"
 	echo "2. - Установка и контейнеризация проекта"
@@ -32,10 +33,12 @@ while true; do
 			chmod 666 /var/run/docker.sock
 
 			echo -e "\e[32m Готово! Софт установлен! \e[0m"
+			read -n 1 -s -p "Нажмите любую клавишу, чтобы продолжить..."
 			;;
 
 		2)
 			while true; do
+				clear
 				echo -e "\n--- [Проверерка компонентов] ---"
 				if command -v docker &> /dev/null; then
 					echo -e "Docker: [ \e[32mУстановлен\e[0m ]"
@@ -88,6 +91,7 @@ EOF
 							docker run -d --name $CONTAINER_NAME --env-file .env $CONTAINER_NAME
 
 							echo -e "\e[32m Проект $CONTAINER_NAME запущен!\e[0m"
+							read -n 1 -s -p "Нажмите любую клавишу, чтобы продолжить..."
 
 						else
 							echo -e "\e[31m Docker не установлен! Установите в главном меню пункт 1.\e[0m"
@@ -107,6 +111,7 @@ EOF
 
 		3)
 			while true; do
+				clear
 				echo -e "\n--- [ Меню удаления ] ---"
 				echo "1. - Удалить проект и контейнеры"
 				echo "2. - Удалить софт"
@@ -124,6 +129,7 @@ EOF
 						rm -rf $PROJECT_NAME
 
 						echo -e "\e[32mГотово! Контейнеры и папка проекта удалена!\e[0m"
+						read -n 1 -s -p "Нажмите любую клавишу, чтобы продолжить..."
 						;;
 
 					2)
@@ -138,6 +144,7 @@ EOF
 						hash -r
 
 						echo -e "\e[32mГотово! Софт удалён!\e[0m"
+						read -n 1 -s -p "Нажмите любую клавишу, чтобы продолжить..."
 						;;
 					
 					3)

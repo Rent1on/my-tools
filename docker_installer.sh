@@ -31,7 +31,7 @@ while true; do
 			echo -e "\nНастраиваю права для Docker-сокета..."
 			chmod 666 /var/run/docker.sock
 
-			echo -e "\e[1;32 Готово! Софт установлен! \e[0m"
+			echo -e "\e[32m Готово! Софт установлен! \e[0m"
 			;;
 
 		2)
@@ -85,10 +85,10 @@ EOF
 							echo "Запускаю контейнер..."
 							docker run -d --name $CONTAINER_NAME --env-file .env $CONTAINER_NAME
 
-							echo -e "\e[1;32m Проект $CONTAINER_NAME запущен!\e[0m"
+							echo -e "\e[32m Проект $CONTAINER_NAME запущен!\e[0m"
 
 						else
-							echo -e "\e[1;31m Docker не установлен! Установите в главном меню пункт 1.\e[0m"
+							echo -e "\e[31m Docker не установлен! Установите в главном меню пункт 1.\e[0m"
 						fi
 						;;
 					
@@ -97,7 +97,7 @@ EOF
 						;;
 
 					*)
-						echo "Не верный выбор действия! Выбирите 1-2!"
+						echo -e "\e[31mНе верный выбор действия! Выбирите 1-2!\e[0m"
 						;;
 				esac
 			done
@@ -115,21 +115,26 @@ EOF
 						read -p "Введите имя вашего контейнера: " CONTAINER_NAME
 						echo "Останавливаю и удаляю контейнеры..."
 						docker stop portainer $CONTAINER_NAME &> /dev/null
-						docker rm portainer $CONTAINER_NAME &> /dev/null
+						docker rm -f portainer $CONTAINER_NAME &> /dev/null
 
 						read -p "Введите названия папки проекта: " PROJECT_NAME
 						echo "Удаляю папку проекта..."
 						rm -rf $PROJECT_NAME
 
-						echo -e "\e[1;32m Готово! Контейнеры и папка проекта удалена!\e[0m"
+						echo -e "\e[32mГотово! Контейнеры и папка проекта удалена!\e[0m"
 						;;
 
 					2)
 						echo -e "\nУдаляю софт..."
+						systemctl stop docker.socket &> /dev/null
+						systemctl stop docker &> /dev/null
 						apt purge docker.io git -y &> /dev/null
+						
+						rm -rf /var/lib/docker
+						rm -rf /var/run/docker.sock
 						apt autoremove -y &> /dev/null
 
-						echo -e "\e[1;32 Готово! Софт удалён!\e[0m"
+						echo -e "\e[32mГотово! Софт удалён!\e[0m"
 						;;
 					
 					3)
@@ -137,7 +142,7 @@ EOF
 						;;
 					
 					*)
-						echo -e "\nНе верный выбор действия! Выбирите 1-2!"
+						echo -e "\e[31mНе верный выбор действия! Выбирите 1-2!\e[0m"
 						;;
 				esac
 			done
@@ -159,7 +164,7 @@ EOF
 			;;
 
 		*)
-			echo -e "\nДанной операции нет, выбирите от 1 до 5!"
+			echo -e "\e[31mДанной операции нет, выбирите от 1 до 5!\e[0m"
 			;;
 
 	esac
